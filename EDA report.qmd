@@ -1,26 +1,36 @@
 ---
 title: "EDA report"
+author: "TICA"
 format: html
 editor: visual
 ---
 
 ## Quarto
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+# Introduction
 
-## Running Code
+-   What does this data represent?
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+-   What is measured?
 
-```{r}
-1 + 1
-```
+-   How was it collected?
 
-You can add options to executable code like this
+# Description of Data Cleaning 
 
-```{r}
-#| echo: false
-2 * 2
-```
+-   Is there any data missingness or other errors? How can this be corrected?
 
-The `echo: false` option disables the printing of code (only output is displayed).
+-   Do the measurements make sense in context? (you might need to discuss with the instructor what to do if not)
+
+# Exploratory Data Analysis 
+
+-   What relationships can you observe visually?
+
+-   Summary statistics
+
+-   What other data might you collect to augment this dataset? Is it available?
+
+# Research Questions 
+
+-   Are there any ethical implications of the research questions we might ask of the data?
+
+-   Research Questions
