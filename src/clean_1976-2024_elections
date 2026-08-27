@@ -18,13 +18,6 @@ X1976_2024_president_clean <- X1976_2024_president %>%
   # Drop 'notes' (100% empty) and 'office' (constant value, always "US PRESIDENT")
   select(-notes, -office) %>%
  
-  # Fix writein: codebook defines it as logical (TRUE/FALSE), but it loaded as numeric (0/1)
-  mutate(writein = case_when(
-    writein == 1 ~ TRUE,
-    writein == 0 ~ FALSE,
-    TRUE ~ NA
-  )) %>%
- 
   # Standardize version to yyyymmdd: most rows already match, but some are
   # in dd/mm/yyyy format, which breaks consistent date parsing/sorting
   mutate(version = case_when(
