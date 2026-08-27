@@ -37,19 +37,16 @@ X1976_2024_president_clean <- X1976_2024_president %>%
   # Fill missing candidate names with a clear placeholder instead of leaving NA
   mutate(candidate = if_else(is.na(candidate), "UNKNOWN/SCATTERING", candidate)) %>%
  
-  # Standardize party_detailed: trim whitespace, fix casing consistency
-  # (raw data had 217 unique values partly due to inconsistent casing/spacing)
-  mutate(party_detailed = str_trim(str_to_upper(party_detailed))) %>%
- 
-  # Fill missing party_detailed with a clear placeholder instead of leaving NA
-  mutate(party_detailed = if_else(is.na(party_detailed), "UNKNOWN", party_detailed)) %>%
- 
+  # Fill missing party_detailed and party_simplified 
   # Fill the single missing party_simplified using "OTHER" as a fallback,
   # so grouped summaries (e.g. vote share by party) don't silently drop this row
+  mutate(party_detailed = if_else(is.na(party_detailed), "UNKNOWN", party_detailed)) %>%
   mutate(party_simplified = if_else(is.na(party_simplified), "OTHER", party_simplified)) %>%
  
+  
+ 
   # Flag suspicious rows (candidatevotes == 0) instead of silently dropping them,
-  # so they can be manually reviewed rather than assumed to be errors
+  # so the data can be manually reviewed rather than assumed to be errors
   mutate(flag_zero_votes = candidatevotes == 0) %>%
  
   # Ensure state fields are consistently uppercase for matching/joins
