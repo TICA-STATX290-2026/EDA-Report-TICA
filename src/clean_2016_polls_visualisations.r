@@ -8,7 +8,7 @@ library(dplyr)
 library(ggplot2)
 library(GGally)
 
-polls <- read_csv("data/cleaned/state_polls_2016_clean.csv")
+polls <- read_csv("data/clean/state_polls_2016_clean.csv")
 
 # plot: average margin by state
 polls %>%
