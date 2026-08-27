@@ -1,4 +1,4 @@
-# Xuan - this script visualises the cleaned 2016 state polls in data\cleaned\state_polls_2016_clean.csv
+# Xuan - this script visualises the cleaned 2016 state polls in data\clean\state_polls_2016_clean.csv
 # This script produces two plots: one showing the average margin by state, and another showing the distribution of margins by state
 
 library(tibble)
