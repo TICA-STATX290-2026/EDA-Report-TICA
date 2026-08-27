@@ -1,0 +1,65 @@
+
+library(readr)
+library(pacman)
+library(skimr)
+pacman::p_load(tidyverse,ggplot2,dplyr,tidyr)
+ 
+# Load raw data
+X1976_2024_president <- read_csv("1976-2024-president.csv")
+X1976_2024_president
+ 
+# Quick structure/summary checks before cleaning
+X1976_2024_president %>% skim()
+summary(X1976_2024_president)
+unique(X1976_2024_president$party_simplified)
+ 
+X1976_2024_president_clean <- X1976_2024_president %>%
+ 
+  # Drop 'notes' (100% empty) and 'office' (constant value, always "US PRESIDENT")
+  select(-notes, -office) %>%
+ 
+  # Fix writein: codebook defines it as logical (TRUE/FALSE), but it loaded as numeric (0/1)
+  mutate(writein = case_when(
+    writein == 1 ~ TRUE,
+    writein == 0 ~ FALSE,
+    TRUE ~ NA
+  )) %>%
+ 
+  # Standardize version to yyyymmdd: most rows already match, but some are
+  # in dd/mm/yyyy format, which breaks consistent date parsing/sorting
+  mutate(version = case_when(
+    str_detect(version, "^\\d{8}$") ~ version,
+    str_detect(version, "^\\d{2}/\\d{2}/\\d{4}$") ~
+      format(as.Date(version, format = "%d/%m/%Y"), "%Y%m%d"),
+    TRUE ~ NA_character_
+  )) %>%
+ 
+  # Clean candidate names: collapse doubled quotes ""NAME"" -> "NAME"
+  # (CSV escaping artifact; same person sometimes appears both ways)
+  mutate(candidate = str_replace_all(candidate, '""', '"')) %>%
+ 
+  # Trim stray leading/trailing whitespace from candidate names
+  mutate(candidate = str_trim(candidate)) %>%
+ 
+  # Fill missing candidate names with a clear placeholder instead of leaving NA
+  mutate(candidate = if_else(is.na(candidate), "UNKNOWN/SCATTERING", candidate)) %>%
+ 
+  # Standardize party_detailed: trim whitespace, fix casing consistency
+  # (raw data had 217 unique values partly due to inconsistent casing/spacing)
+  mutate(party_detailed = str_trim(str_to_upper(party_detailed))) %>%
+ 
+  # Fill missing party_detailed with a clear placeholder instead of leaving NA
+  mutate(party_detailed = if_else(is.na(party_detailed), "UNKNOWN", party_detailed)) %>%
+ 
+  # Fill the single missing party_simplified using "OTHER" as a fallback,
+  # so grouped summaries (e.g. vote share by party) don't silently drop this row
+  mutate(party_simplified = if_else(is.na(party_simplified), "OTHER", party_simplified)) %>%
+ 
+  # Flag suspicious rows (candidatevotes == 0) instead of silently dropping them,
+  # so they can be manually reviewed rather than assumed to be errors
+  mutate(flag_zero_votes = candidatevotes == 0) %>%
+ 
+  # Ensure state fields are consistently uppercase for matching/joins
+  # (prevents mismatches like "Ohio" vs "OHIO" when merging with other datasets)
+  mutate(state = str_to_upper(str_trim(state)),
+         state_po = str_to_upper(str_trim(state_po)))
