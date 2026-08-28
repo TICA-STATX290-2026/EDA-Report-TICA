@@ -1,132 +1,76 @@
 # Xuan - this script cleans the 2016 state polls in data\raw\state_polls_2016.csv
 # and saves it to a new csv file in data\cleaned\state_polls_2016_clean.csv
-# some of the data checking code is commented out because it was used for checking the data and is not needed for the final cleaning
+library(tidyverse)
 
-library(tibble)
-library(readr)
-library(naniar)
-library(dplyr)
-library(ggplot2)
-library(GGally)
+# Read in data and save an unchanged data set 
+polls_2016_raw <- read.csv("data/raw/state_polls_2016.csv")
+polls_2016_tidy <- polls_2016_raw
 
-output_file <- "data/cleaned/state_polls_2016_clean.csv"
-
-# load data
-polls_2016_raw <- read_csv("data/raw/state_polls_2016.csv")
-
-# clean column names by standardizing them brute force
-# =====================
-# converts all column names to lowercase just in case
-# replaces any possible non-alphanumeric characters with underscores
-# strips off any possible leading or trailing underscores
-
-colnames(polls_2016_raw) <- polls_2016_raw %>%
-  colnames() %>%
-  tolower() %>%
-  gsub("[^a-z0-9]+", "_", .) %>%
-  gsub("^_+|_+$", "", .)
-
-View(polls_2016_raw, title = "raw data check")
-
-# cleaning data types and handling missing values
-# ================================
-# converts the dates to R objects
-# replaces "Not included in poll" in the other column with NA
-# converts the other column to numeric
-# replace that one sample size of -1
-
-polls_2016 <- polls_2016_raw %>%
+# Remove redundant information in poll_info values to only keep state names  
+polls_2016_tidy <- polls_2016_tidy %>%
   mutate(
-    start_date = as.Date(start_date),
-    end_date = as.Date(end_date)
-  ) %>%
-
-  replace_with_na(replace = list(other = "Not included in poll")) %>%
-
-  mutate(other = as.numeric(other)) %>%
-
-  replace_with_na(replace = list(sample_size = -1))
-
-
-# clean column names by standardizing them brute force
-# where is California and Florida??
-# ====================
-# replace any '-' with spaces
-# Cap the first letter of each word
-
-# get state names from middle text starts with "2016-" and ending with "-president" or "-presidential-general-election"
-polls_2016 <- polls_2016 %>%
-  mutate(state = sub("^2016-(.*?)-(president|presidential-general-election).*", "\\1", poll_info))
-
-polls_2016 <- polls_2016 %>%
+    poll_info = str_remove(poll_info, "^2016-"),
+    poll_info = str_remove(poll_info, "-president-trump-vs-clinton$"),
+    poll_info = str_replace_all(poll_info, "-", " "),
+    poll_info = str_to_title(poll_info),
+    poll_info = str_replace(poll_info, "Washington D C", "Washington Dc")
+  )
+# Remove additional information from other poll_info values 
+polls_2016_tidy <- polls_2016_tidy %>%
   mutate(
-    state = gsub("-", " ", state),
-    state = tools::toTitleCase(state),
+    poll_info = str_remove(
+      poll_info,
+      " Presidential General Election Trump Vs Clinton"
+    ) 
+  ) %>% 
+  # Rename poll_info to State for meaningful variable name 
+  rename(State = poll_info)
+
+# Check for missingness in Trump and Clinton variable 
+sum(is.na(polls_2016_tidy$Trump))
+sum(is.na(polls_2016_tidy$Clinton))
+
+# Check Trump and Clinton values are valid percentages (between 0 and 100)
+sum(polls_2016_tidy$Trump < 0 | polls_2016_tidy$Trump > 100, na.rm = TRUE)
+sum(polls_2016_tidy$Clinton < 0 | polls_2016_tidy$Clinton > 100, na.rm = TRUE)
+
+# Recode "Not included in poll" to NA for consistent representation of missingness
+# Convert Other values to numeric 
+polls_2016_tidy <- polls_2016_tidy %>%
+  mutate(
+    Other = na_if(Other, "Not included in poll"),
+    Other = as.numeric(Other)
   )
 
+# Check for duplicated poll ID's 
+sum(duplicated(polls_2016_tidy$poll_id))
+# Check for any completely duplicated observations 
+sum(duplicated(polls_2016_tidy))
 
-# write cleaned data
+# Convert start_date and end_date values to Date values 
+polls_2016_tidy <- polls_2016_tidy %>%
+  mutate(
+    start_date = as.Date(start_date), 
+    end_date = as.Date(end_date)
+  )
+
+# Check if sample size for any observations is less than 1 (invalid values)
+sum(polls_2016_tidy$sample_size < 1, na.rm = TRUE)
+# Negative sample sizes considered invalid, and recorded as missing (NA)
+polls_2016_tidy <- polls_2016_tidy %>%
+  mutate(
+    sample_size = if_else(sample_size < 1, NA, sample_size)
+  )
+
+# Examine relationship between partisanship and partisan affiliation
+table(polls_2016_raw$partisanship, polls_2016_raw$partisan_affiliation)
+# Change "None" values to NA as affiliation is not applicable for nonpartisan polls 
+polls_2016_tidy <- polls_2016_tidy  %>%
+  mutate(
+    partisan_affiliation = na_if(partisan_affiliation, "None")
+  )
+
 write_csv(
-  polls_2016,
-  output_file
+  polls_2016_tidy,
+  "data/clean/state_polls_2016_clean.csv"
 )
-
-View(polls_2016, title = "cleaned full")
-
-# cat("2016 POLL SUMMARY\n")
-# cat("rows:", nrow(polls_2016), "\n")
-# cat("cols:", ncol(polls_2016), "\n")
-# cat("unique poll id amount:", n_distinct(polls_2016$poll_id), "\n")
-# cat("states:", n_distinct(polls_2016$state), "\n")
-
-# View(miss_var_summary(polls_2016), title = "na amount in cleaned")
-# View(polls_2016 %>% count(sample_subpopulation), title = "Counts by Subpopulation")
-# View(polls_2016 %>% count(mode), title = "Counts by Mode")
-# View(polls_2016 %>% count(pollster), title = "Counts by Pollster")
-
-
-# # check for missing vars in raw data
-# missing_summary <- miss_var_summary(polls_2016_raw)
-# View(missing_summary, title = "na in raw")
-
-
-# # previous check for errors and na
-# # ============================
-
-# if any of them is NA (none of them are)
-# missing_states <- polls_2016 %>%
-#   filter(is.na(state)) %>%
-#   select(poll_info)
-# View(missing_states, title = "Unextracted States")
-
-# # if date is na or end_date < start_date
-# date_errors <- polls_2016 %>%
-#   filter(
-#     is.na(start_date) |
-#     is.na(end_date) |
-#     end_date < start_date
-#   )
-
-# cat("date error:", nrow(date_errors), "\n")
-
-# # check for other sample size problems other than the -1
-# sample_size_errors <- polls_2016 %>%
-#   filter(
-#     !is.na(sample_size) &
-#       sample_size <= 0
-#   )
-
-# cat("sample size error:", nrow(sample_size_errors), "\n")
-
-# # % that is not 0 - 100 or na
-# percentage_errors <- polls_2016 %>%
-#   filter(
-#     between(trump, 0, 100) == FALSE |
-#     between(clinton, 0, 100) == FALSE |
-#     (!is.na(other) & between(other, 0, 100) == FALSE) |
-#     (!is.na(undecided) & between(undecided, 0, 100) == FALSE) |
-#     (!is.na(johnson) & between(johnson, 0, 100) == FALSE) |
-#     (!is.na(mcmullin) & between(mcmullin, 0, 100) == FALSE)
-#   )
-
-# cat("percentage error:", nrow(percentage_errors), "\n")
