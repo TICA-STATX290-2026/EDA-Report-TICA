@@ -61,7 +61,7 @@ polls_tidy <- polls_tidy %>%
     partisan_affiliation = na_if(partisan_affiliation, "None")
   )
 
-# Convert columns "Obama", "Romney", "Other", "Undecided" under new Candidate column
+# Convert columns "Obama", "Romney", "Other", "Undecided" under new candidate column
 polls_tidy <- polls_tidy %>%
   pivot_longer(
     cols = c("Obama", "Romney", "Other", "Undecided"),

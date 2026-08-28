@@ -70,6 +70,14 @@ polls_2016_tidy <- polls_2016_tidy  %>%
     partisan_affiliation = na_if(partisan_affiliation, "None")
   )
 
+# Convert columns "Trump", "Clinton", "Other", "Undecided"
+# "Johnson", "McMullin" under new candidate column
+polls_2016_tidy <- polls_2016_tidy %>%
+  pivot_longer(
+    cols = c("Trump", "Clinton", "Other", "Undecided", "Johnson", "McMullin"), names_to = "candidate",
+    values_to = "support"
+  )
+
 write_csv(
   polls_2016_tidy,
   "data/clean/state_polls_2016_clean.csv"
