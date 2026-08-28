@@ -12,10 +12,10 @@ polls <- read_csv("data/clean/state_polls_2016_clean.csv")
 
 # plot: average margin by state
 polls %>%
-  mutate(margin = trump - clinton) %>%
-  group_by(state) %>%
+  mutate(margin = Trump - Clinton) %>%
+  group_by(State) %>%
   summarise(avg_margin = mean(margin, na.rm = TRUE)) %>%
-  ggplot(aes(x = avg_margin, y = reorder(state, avg_margin))) +
+  ggplot(aes(x = avg_margin, y = reorder(State, avg_margin))) +
   geom_vline(xintercept = 0) +
   geom_col() +
   labs(
@@ -27,8 +27,8 @@ polls %>%
 
 # second version: distribution of margins by state
 polls %>%
-  mutate(margin = trump - clinton) %>%
-  ggplot(aes(x = margin, y = reorder(state, margin, FUN = median, na.rm = TRUE))) +
+  mutate(margin = Trump - Clinton) %>%
+  ggplot(aes(x = margin, y = reorder(State, margin, FUN = median, na.rm = TRUE))) +
   geom_vline(xintercept = 0, linetype = "dashed") +
   geom_boxplot() +
   labs(
