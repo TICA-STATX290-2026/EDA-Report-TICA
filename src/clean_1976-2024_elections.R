@@ -18,6 +18,13 @@ X1976_2024_president_clean <- X1976_2024_president %>%
   # Drop 'notes' (100% empty) and 'office' (constant value, always "US PRESIDENT")
   select(-notes, -office) %>%
  
+  # Fix writein: codebook defines it as logical (TRUE/FALSE), but it loaded as numeric (0/1)
+  mutate(writein = case_when(
+    writein == 1 ~ TRUE,
+    writein == 0 ~ FALSE,
+    TRUE ~ NA
+  )) %>%
+ 
   # Standardize version to yyyymmdd: most rows already match, but some are
   # in dd/mm/yyyy format, which breaks consistent date parsing/sorting
   mutate(version = case_when(
@@ -37,16 +44,19 @@ X1976_2024_president_clean <- X1976_2024_president %>%
   # Fill missing candidate names with a clear placeholder instead of leaving NA
   mutate(candidate = if_else(is.na(candidate), "UNKNOWN/SCATTERING", candidate)) %>%
  
-  # Fill missing party_detailed and party_simplified 
+  # Standardize party_detailed: trim whitespace, fix casing consistency
+  # (raw data had 217 unique values partly due to inconsistent casing/spacing)
+  mutate(party_detailed = str_trim(str_to_upper(party_detailed))) %>%
+ 
+  # Fill missing party_detailed with a clear placeholder instead of leaving NA
+  mutate(party_detailed = if_else(is.na(party_detailed), "UNKNOWN", party_detailed)) %>%
+ 
   # Fill the single missing party_simplified using "OTHER" as a fallback,
   # so grouped summaries (e.g. vote share by party) don't silently drop this row
-  mutate(party_detailed = if_else(is.na(party_detailed), "UNKNOWN", party_detailed)) %>%
   mutate(party_simplified = if_else(is.na(party_simplified), "OTHER", party_simplified)) %>%
  
-  
- 
   # Flag suspicious rows (candidatevotes == 0) instead of silently dropping them,
-  # so the data can be manually reviewed rather than assumed to be errors
+  # so they can be manually reviewed rather than assumed to be errors
   mutate(flag_zero_votes = candidatevotes == 0) %>%
  
   # Ensure state fields are consistently uppercase for matching/joins
