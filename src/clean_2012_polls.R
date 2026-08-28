@@ -14,7 +14,7 @@ polls_tidy <- polls_tidy %>%
   )
 # Rename poll_info to State for meaningful variable name 
 polls_tidy <- polls_tidy %>%
-  rename(State = poll_info)
+  rename(state = poll_info)
 
 # Check for missingness in Obama and Romney variable 
 sum(is.na(polls_tidy$Romney))
@@ -59,6 +59,14 @@ table(polls_raw$partisanship, polls_raw$partisan_affiliation)
 polls_tidy <- polls_tidy %>%
   mutate(
     partisan_affiliation = na_if(partisan_affiliation, "None")
+  )
+
+# Convert columns "Obama", "Romney", "Other", "Undecided" under new Candidate column
+polls_tidy <- polls_tidy %>%
+  pivot_longer(
+    cols = c("Obama", "Romney", "Other", "Undecided"),
+    names_to = "candidate",
+    values_to = "support"
   )
 
 write_csv(
