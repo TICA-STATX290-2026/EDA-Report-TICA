@@ -1,4 +1,4 @@
-State,poll_id,pollster,start_date,end_date,sample_subpopulation,sample_size,mode,partisanship,partisan_affiliation,candidate,support
+state,poll_id,pollster,start_date,end_date,sample_subpopulation,sample_size,mode,partisanship,partisan_affiliation,candidate,support
 Washington Dc,26807,SurveyMonkey,2016-11-01,2016-11-07,Likely Voters,310,Internet,Nonpartisan,NA,Trump,7
 Washington Dc,26807,SurveyMonkey,2016-11-01,2016-11-07,Likely Voters,310,Internet,Nonpartisan,NA,Clinton,85
 Washington Dc,26807,SurveyMonkey,2016-11-01,2016-11-07,Likely Voters,310,Internet,Nonpartisan,NA,Other,6
