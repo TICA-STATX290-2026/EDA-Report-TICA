@@ -7,11 +7,20 @@ library(naniar)
 library(dplyr)
 library(ggplot2)
 library(GGally)
+library(tidyverse)
 
 polls <- read_csv("data/clean/state_polls_2016_clean.csv")
 
+# Reshape data to wide format so Trump and Clinton are individual columns
+polls_wide <- polls %>%
+  filter(candidate %in% c("Trump", "Clinton")) %>%
+  pivot_wider(
+    names_from = candidate, 
+    values_from = support
+  )
+
 # plot: average margin by state
-polls %>%
+polls_wide %>%
   mutate(margin = Trump - Clinton) %>%
   group_by(state) %>%
   summarise(avg_margin = mean(margin, na.rm = TRUE)) %>%
@@ -26,7 +35,7 @@ polls %>%
 
 
 # second version: distribution of margins by state
-polls %>%
+polls_wide %>%
   mutate(margin = Trump - Clinton) %>%
   ggplot(aes(x = margin, y = reorder(state, margin, FUN = median, na.rm = TRUE))) +
   geom_vline(xintercept = 0, linetype = "dashed") +
