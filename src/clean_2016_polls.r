@@ -23,8 +23,8 @@ polls_2016_tidy <- polls_2016_tidy %>%
       " Presidential General Election Trump Vs Clinton"
     ) 
   ) %>% 
-  # Rename poll_info to State for meaningful variable name 
-  rename(State = poll_info)
+  # Rename poll_info to state for meaningful variable name 
+  rename(state = poll_info)
 
 # Check for missingness in Trump and Clinton variable 
 sum(is.na(polls_2016_tidy$Trump))
