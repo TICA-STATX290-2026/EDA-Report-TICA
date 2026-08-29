@@ -1,0 +1,172 @@
+---
+title: "EDA project"
+format: html
+editor: TICA
+---
+
+```{r}
+#| label: read in polling and election data sets
+#| include: false
+
+library(tidyverse)
+election_results <- read_csv("data/clean/1976-2024-president-clean.csv")
+polls_2012 <- read_csv("data/clean/state_polls_2012_clean.csv")
+polls_2016 <- read_csv("data/clean/state_polls_2016_clean.csv")
+
+```
+
+## Introduction
+
+## Description of Data Cleaning
+
+## EDA  
+
+The conducted analysis explored how state election results transformed between 2012 and 2016, and further, whether differences in state competitiveness were observed in polling coverage and accuracy. For consistency, election and polling margins were calculated as Democratic - Republican (%). Positive values signify Democratic leaning observations whereas negative values signify Republican advantage.
+
+```{r}
+#| label: scatter-2012-and-2016-election-margins 
+#| fig-cap: "State election margins are mostly consistent in both years, but some 
+#| states shifted from Democratic to Republican"
+
+election_margin <- election_results %>%
+  filter(year %in% c(2012, 2016), party_simplified %in% c("DEMOCRAT", "REPUBLICAN")) %>%
+  group_by(year, state, party_simplified) %>%
+  summarise(votes = sum(candidatevotes), totalvotes = first(totalvotes), .groups = "drop") %>%
+  pivot_wider(names_from = party_simplified, values_from = votes) %>%
+  mutate(margin = (DEMOCRAT - REPUBLICAN) / totalvotes * 100) %>%
+  select(year, state, margin) %>%
+  pivot_wider(names_from = year, values_from = margin, names_prefix = "margin_")
+
+ggplot(election_margin, aes(x = margin_2012, y = margin_2016)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  coord_cartesian(xlim = c(-50, 50), ylim = c(-50, 40)) +
+  labs(
+    title = "State Presidential Election Margins: 2012 vs 2016",
+    x = "2012 Democratic - Republican Margin (percentage points)",
+    y = "2016 Democratic - Republican Margin (percentage points)"
+  )
+
+```
+
+The positive linear relationship indicates state election margins were relatively similar between 2012 and 2016, highlighting consistency in voting patterns by state. However, several states shifted from a Democratic in 2012 to Republican in 2016 as depicted in the bottom right quadrant. A number of these states were also close to a zero margin in 2016. This suggests that despite majority of US states remaining consistent in their overall voting, changes within competitive states were a key difference between the 2012 and 2016 elections.
+
+The observation of competitive states led to an analysis on polling and how this was distributed across states. To determine state competitiveness, the absolute value of the election margin was measured, meaning that values near zero represented closer election results.
+
+```{r}
+#| label: scatter-competitiveness-and-poll-count 
+#| fig-cap: "States with competitive election results appeared to receive greater
+#| polling coverage in week before elections for both 2012 and 2016"
+
+# Count final-week polls for each state
+poll_counts_2012 <- polls_2012 %>%
+  filter(end_date >= as.Date("2012-10-30"), end_date < as.Date("2012-11-06")) %>%
+  distinct(state, poll_id) %>%
+  count(state, name = "poll_counts") %>%
+  mutate(year = 2012)
+
+poll_counts_2016 <- polls_2016 %>%
+  filter(end_date >= as.Date("2016-11-01"), end_date < as.Date("2016-11-08")) %>%
+  distinct(state, poll_id) %>%
+  count(state, name = "poll_counts") %>%
+  mutate(year = 2016)
+
+# Combine both years and add election competitiveness
+polling_competitiveness <- bind_rows(poll_counts_2012, poll_counts_2016) %>%
+  left_join(election_margin %>%
+      pivot_longer(cols = c(margin_2012, margin_2016), names_to = "year", values_to = "margin") %>%
+      mutate(year = as.numeric(str_remove(year, "margin_")), competitiveness = abs(margin)) %>%
+      select(state, year, competitiveness),by = c("state", "year"))
+
+ggplot(polling_competitiveness, aes(x = competitiveness, y = poll_counts, colour = factor(year))) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "State Competitiveness And Polling In The Week Before Elections",
+    x = "Absolute Election Margin (percentage points)",
+    y = "Number of Final-Week Polls",
+    colour = "Election Year"
+  )
+```
+
+The negative linear relationship indicates that states with smaller election margins had mostly received more polls in the week prior to the elections, and vice versa. This implies that competitive states had more polling coverage rather than an even distribution across the states. It is important to note that the state competitiveness is measured utilising the election results, and thus, this relationship may be an association rather than a cause-and-effect evidence that shows competitiveness resulted in greater polling activity.
+
+The differences in polling coverage led to an examination of the accuracy of the final week polling, and this was compared between the two elections. Polling error was measured as the polling margin - election margin. Positive errors indicated polls more Democratic than the election results, whereas, a negative error indicated the polls leaned more Republican.
+
+```{r}
+#| label: boxplot-polling-error-2012-and-2016 
+#| fig-cap: "Polling leaning more Republican than actual election in 2012, whereas polling leaning more Democratic than actual election in 2016, with greater variation in 2016"
+
+# Calculate average final-week polling margin for each state in 2012
+poll_margin_2012 <- polls_2012 %>%
+  filter(candidate %in% c("Obama", "Romney"), end_date >= as.Date("2012-10-30"),
+    end_date < as.Date("2012-11-06")) %>%
+  select(poll_id, state, candidate, support) %>%
+  pivot_wider(names_from = candidate, values_from = support) %>%
+  mutate(poll_margin = Obama - Romney) %>%
+  group_by(state) %>%
+  summarise(poll_margin = mean(poll_margin, na.rm = TRUE)) %>%
+  mutate(year = "2012")
+
+# Calculate average final-week polling margin for each state in 2016
+poll_margin_2016 <- polls_2016 %>%
+  filter(candidate %in% c("Clinton", "Trump"), end_date >= as.Date("2016-11-01"),
+  end_date < as.Date("2016-11-08")) %>%
+  select(poll_id, state, candidate, support) %>%
+  pivot_wider(names_from = candidate, values_from = support) %>%
+  mutate(poll_margin = Clinton - Trump) %>%
+  group_by(state) %>%
+  summarise(poll_margin = mean(poll_margin, na.rm = TRUE)) %>%
+  mutate(year = "2016")
+
+# Combine polling margins and calculate polling error
+polling_errors <- bind_rows(poll_margin_2012,poll_margin_2016) %>%
+  left_join(election_margin %>%
+      pivot_longer(cols = c(margin_2012, margin_2016), names_to = "year", values_to = "election_margin") %>%
+      mutate(year = str_remove(year, "margin_")),
+    by = c("state", "year")
+  ) %>%  mutate(polling_error = poll_margin - election_margin)
+
+ggplot(polling_errors,aes(x = year, y = polling_error)) +
+  geom_boxplot() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  labs(
+    title = "Final-Week State Polling Error: 2012 vs 2016",
+    x = "Election Year",
+    y = "Polling Error (% points)"
+  )
+
+```
+
+While the 2012 polling error appears below zero, the 2016 error appears to be centred above zero and displays a greater spread. This difference corresponds to 2012 polls tending to be slightly more Republican than eventual results, and conversely, more Democratic in the 2016 polls. The greater variation in the 2016 polling error also indicates that polling margins were further from actual results than in comparison to 2012. An important limitation to consider is that the visualisation explores individual polls and with equal weight. This means that states with more polling coverage had greater influence than the states with fewer polls.
+
+After observing a larger polling error for 2016, a closer examination on competitive states was conducted. Competitive states were chosen based on those that were within 10 percentage points for the election margin.
+
+```{r}
+#| label: scatter-competitive-state-polls-in-2016
+#| fig-cap: "Many competitive states had average polling opposing the leading party from actual election votes"
+
+# Select competitive states from 2016
+competitive_2016 <- polling_errors %>%
+  filter(
+    year == "2016",
+    abs(election_margin) <= 10
+  )
+
+ggplot(competitive_2016,  aes(x = election_margin, y = poll_margin)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_vline(xintercept = 0, linetype = "dashed") +
+  labs(
+    title = "2016 Final-Week Polling in Competitive States",
+    x = "Actual Election Margin (percentage points)",
+    y = "Average Final-Week Polling Margin (percentage points)")
+
+```
+
+Majority of the 'competitive' states had a mean final week polling margin corresponding to the same side as the actual election results. However, some states had average polling margins contradicting the actual election results (top left quadrant). These particular states had a case where the polling margin indicated a different leading party from the party that eventually won the state. However, the averaging method means that each poll has equal weight and doesn't consider differences in sample size, method of polling, or quality of pollster.
+
+What other data might you collect to augment this dataset? Is it available?
+
+## Research Questions 
