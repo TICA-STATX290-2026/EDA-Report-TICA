@@ -24,6 +24,9 @@ sum(is.na(polls_tidy$Obama))
 sum(polls_tidy$Romney < 0 | polls_tidy$Romney > 100, na.rm = TRUE)
 sum(polls_tidy$Obama < 0 | polls_tidy$Obama > 100, na.rm = TRUE)
 
+# Check missingness in Undecided variable 
+sum(is.na(polls_tidy$Undecided))
+
 # Recode "Not included in poll" to NA for consistent representation of missingness
 # Convert Other values to numeric 
 polls_tidy <- polls_tidy %>%
@@ -34,9 +37,8 @@ polls_tidy <- polls_tidy %>%
 
 # Check for duplicated poll ID's 
 sum(duplicated(polls_tidy$poll_id))
-# Check for any completely duplicated observations 
+# Check for any completely duplicated observations
 sum(duplicated(polls_tidy))
-
 
 # Convert start_date and end_date values to Date values 
 polls_tidy <- polls_tidy %>%
