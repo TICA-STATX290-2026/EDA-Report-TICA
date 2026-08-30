@@ -17,9 +17,122 @@ polls_2016 <- read_csv("data/clean/state_polls_2016_clean.csv")
 
 ## Introduction
 
+The state_polls_2012.csv and state_polls_2016.csv data sets are aggregated survey data by HuffPost Pollster, consisting of numerous state-level pre-election polls conducted by many different polling organisations. Each pollster utilised differing methodologies with factors such as interview mode, sample size and population, and field period varying between organisations. Fundamentally, the data sets measure the percentage of respondents who reported support for different presidential candidates, such as Obama/Romney in 2012 and Trump/Clinton in 2016. This data was retrieved from HuffPost Pollster via the pollstR R package on 10 January 2017 as part of the rOpenGov project.
+
+Below is a detailed explanation of each column.
+
+**Key Variables:**
+
+-   poll_info: text identifying the contest e.g. 2016-washington-d-c-president-trump-vs-clinton
+
+-   Obama / Romney (2012): Reported support for candidate (%, major-party)
+
+-   Trump, Clinton, Johnson, McMullin (2016): Reported support for each candidate (%)
+
+-   Undecided: Reported undecided voters (%)
+
+-   Other: Reported support for other candidates (%)
+
+-   poll_id: Poll identifier
+
+-   pollster: Polling organisation, sometimes with sponsor/partner appended
+
+-   start_date, end_date: Field period (YYYY-MM-DD)
+
+-   sample_subpopulation: Likely Voters / Registered Voters / Adults
+
+-   sample_size: Reported sample size
+
+-   mode: Interview mode (Live Phone, Internet, Mixed...)
+
+-   partisanship: Whether the poll is Nonpartisan, or partisan by Pollster or Sponsor
+
+-   partisan_affiliation: Party affiliation where partisan (Dem/Rep/None)
+
+**Data Types:**
+
+-   Numerical: Obama, Romney, Trump, Clinton, Johnson, McMullin, Undecided, Other, sample_size
+
+-   Categorical: poll_info, pollster, sample_subpopulation, mode, partisanship, partisan_affiliation
+
+-   Temporal: start_date, end_date
+
+-   ID: poll_id
+
+Varying factors such as sample size, sample population, field period, and interview mode means that observations are not based on identical polling methods or populations and thus, may not be directly comparable.
+
+```{r}
+ggplot(polls_2012, aes(x = end_date)) +
+  geom_histogram(bins = 25) +
+  labs(
+    title = "Increasing Polling Activity Towards 2012 Election",
+    x = "Poll End Date",
+    y = "No. of Polls") +
+  theme_classic()
+
+ggplot(polls_2016, aes(x = end_date)) +
+  geom_histogram(bins = 25) +
+  labs(
+    title = "Increasing Polling Activity Towards 2016 Election",
+    x = "Poll End Date",
+    y = "No. of Polls") +
+  theme_classic()
+
+```
+
+The number of observed polls are also not uniformly distributed throughout either 2012 or 2016 election cycle, with both data sets indicating greater polling activity towards Election Day. This means that respondents' preferences in the later periods of campaigns are more heavily represented. The temporal imbalance poses a limitation and should be considered when analysing summaries across the entire period.
+
+Some candidates and response categories were also not included in every observation, leading to missing or non-applicable values. All together, such characteristics must be taken into consideration when comparing and interpreting polling results.
+
+The 1976-2024-president.csv data set consists of certified state-level returns for the US presidential elections. The purpose of this data set is to record realised election outcomes and thus, provides a foundation for comparison with polling estimates. It contains data from 1976 to 2024, retrieved from the MIT Election Data and Science Lab via Harvard Dataverse. Each observation showcases the total votes for one candidate in a specific state and year. The data set fundamentally measures candidate vote counts and total number of state votes, along with information identifying the year of election, candidate, state and political party. For this particular analysis, the observations containing year 2012 and 2016 were specifically relevant given the availability of the polling data.
+
+Below is a detailed explanation of each column.
+
+**Key Variables:**
+
+-   year: year which election was held
+
+-   state: name of state
+
+-   state_po: postal abbreviation of state
+
+-   state_fips, state_cen, state_ic: identification codes of state (FIPS code, Census state code, ICPSR state code)
+
+-   candidate: name of presidential candidate as it appears in House Clerk report
+
+-   party_detailed: detailed political party classification as they appear in House Clerk report
+
+-   party_simplified: simplified political party classification
+
+-   writein: if candidate was a write-in candidate
+
+-   candidatevotes: number of votes for the candidate for the particular party
+
+-   totalvotes: total votes in the state
+
+-   office: Office contested
+
+-   version: date the data set was last updated (format: yyyymmdd)
+
+-   notes: additional information
+
+**Data Types:**
+
+-   Numerical: candidatevotes, totalvotes, year
+
+-   Categorical\*: state, state_po, party_detailed, party_simplified, office, candidate, state_fips, state_cen, state_ic
+
+-   Logical: writein
+
+-   Metadata: version, notes
+
+\*Last 3 variables are stored as numeric codes, however, treated as categorical given they identify states and do not represent quantities.
+
+A notable limitation of the election data set is that results are aggregated and recorded only at the state level. This means that distinctions within a particular state (e.g. voting patterns between countries or urban/rural areas) cannot be investigated. Another key limitation for this analysis is the extent of comparison that can be made. Specifically, the election data set spans 1976 to 2024, while only 2 of these years overlap with the available polling data. This limits the direct comparisons between polling predictions and actual elections results to 2012 and 2016 observations.
+
 ## Description of Data Cleaning
 
-## EDA  
+## EDA
 
 The conducted analysis explored how state election results transformed between 2012 and 2016, and further, whether differences in state competitiveness were observed in polling coverage and accuracy. For consistency, election and polling margins were calculated as Democratic - Republican (%). Positive values signify Democratic leaning observations whereas negative values signify Republican advantage.
 
@@ -169,4 +282,4 @@ Majority of the 'competitive' states had a mean final week polling margin corres
 
 What other data might you collect to augment this dataset? Is it available?
 
-## Research Questions 
+## Research Questions
