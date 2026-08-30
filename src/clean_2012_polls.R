@@ -51,6 +51,9 @@ polls_tidy <- polls_tidy %>%
     start_date = as.Date(start_date), 
     end_date = as.Date(end_date)
   )
+# Check start_date is earlier than end_date for validity 
+sum(polls_tidy$start_date > polls_tidy$end_date, na.rm = TRUE)
+
 
 # Check if sample size for any observations is less than 1 (invalid values)
 sum(polls_raw$sample_size < 1, na.rm = TRUE)
