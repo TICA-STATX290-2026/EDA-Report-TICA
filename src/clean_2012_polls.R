@@ -71,6 +71,19 @@ polls_tidy <- polls_tidy %>%
     partisan_affiliation = na_if(partisan_affiliation, "None")
   )
 
+# Investigate pollster variable 
+sum(is.na(polls_tidy$pollster))
+unique(polls_tidy$pollster)
+
+# Investigate sample_subpopulation variable 
+sum(is.na(polls_tidy$sample_subpopulation))
+unique(polls_tidy$sample_subpopulation)
+
+# Investigate mode variable 
+sum(is.na(polls_tidy$mode))
+unique(polls_tidy$mode)
+
+
 # Convert columns "Obama", "Romney", "Other", "Undecided" under new candidate column
 polls_tidy <- polls_tidy %>%
   pivot_longer(
