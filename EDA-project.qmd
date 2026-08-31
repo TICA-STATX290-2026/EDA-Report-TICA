@@ -322,4 +322,14 @@ Majority of the 'competitive' states had a mean final week polling margin corres
 
 What other data might you collect to augment this dataset? Is it available?
 
+[2016 polling data set]{.underline}
+
+The 2016 polling dataset was cleaned using the same methods as the 2012 dataset to ensure consistency comparison across years.
+
+First, the `poll_info` variable was renamed to `state`, and all redundant information was removed to leave only state names. Any minor inconsistencies in state name formatting between the two datasets were standardized.
+
+As with the 2012 data, the candidate support variables: `Trump`, `Clinton`, `Undecided`, `Other`, `Johnson`, and `McMullin`, were checked for missing values and validated to ensure percentages fell between to fall between 0 to 100%. The remaining variables (`poll_id`, `start_date`, `end_date`, `sample_size`, `partisan_affiliation`, `pollster`, `sample_subpopulation`, `mode`, and `Other`) were cleaned using the same workflow applied to the 2012 dataset.
+
+Finally, the candidate support columns were reshaped from wide to long format, creating two unified variables: `candidate` and `support`. The consistency in structure ensured that the two polling results and election result could be analysed easily.
+
 ## Research Questions
