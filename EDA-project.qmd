@@ -11,6 +11,7 @@ editor: TICA
 library(tidyverse)
 election_results <- read_csv("data/clean/1976-2024-president-clean.csv")
 polls_2012 <- read_csv("data/clean/state_polls_2012_clean.csv")
+polls_2012_raw <- read_csv("data/raw/state_polls_2012.csv")
 polls_2016 <- read_csv("data/clean/state_polls_2016_clean.csv")
 
 ```
@@ -84,7 +85,7 @@ The number of observed polls are also not uniformly distributed throughout eithe
 
 Some candidates and response categories were also not included in every observation, leading to missing or non-applicable values. All together, such characteristics must be taken into consideration when comparing and interpreting polling results.
 
-The 1976-2024-president.csv data set consists of certified state-level returns for the US presidential elections. The purpose of this data set is to record realised election outcomes and thus, provides a foundation for comparison with polling estimates. It contains data from 1976 to 2024, retrieved from the MIT Election Data and Science Lab via Harvard Dataverse. Each observation showcases the total votes for one candidate in a specific state and year. The data set fundamentally measures candidate vote counts and total number of state votes, along with information identifying the year of election, candidate, state and political party. For this particular analysis, the observations containing year 2012 and 2016 were specifically relevant given the availability of the polling data.
+The 1976-2024-president.csv data set consists of certified state-level returns for the US presidential elections. The purpose of this data set is to record realised election outcomes and thus, provides a foundation for comparison with polling estimates. It contains data from 1976 to 2024, retrieved from the MIT Election Data and Science Lab via Harvard Dataverse. Each observation records the votes for one candidate in a specific state and year. The data set fundamentally measures candidate vote counts and total number of state votes, along with information identifying the year of election, candidate, state and political party. For this particular analysis, the observations containing year 2012 and 2016 are specifically relevant given the availability of the polling data.
 
 Below is a detailed explanation of each column.
 
@@ -128,11 +129,50 @@ Below is a detailed explanation of each column.
 
 \*Last 3 variables are stored as numeric codes, however, treated as categorical given they identify states and do not represent quantities.
 
-A notable limitation of the election data set is that results are aggregated and recorded only at the state level. This means that distinctions within a particular state (e.g. voting patterns between countries or urban/rural areas) cannot be investigated. Another key limitation for this analysis is the extent of comparison that can be made. Specifically, the election data set spans 1976 to 2024, while only 2 of these years overlap with the available polling data. This limits the direct comparisons between polling predictions and actual elections results to 2012 and 2016 observations.
+A notable limitation of the election data set is that results are aggregated and recorded only at the state level. This means that distinctions within a particular state (e.g. voting patterns between counties or urban/rural areas) cannot be investigated. Another key limitation for this analysis is the extent of comparison that can be made. Specifically, the election data set spans 1976 to 2024, while only 2 of these years overlap with the available polling data. This limits the direct comparisons between polling predictions and actual elections results to 2012 and 2016 observations.
 
 ## Description of Data Cleaning
 
-## EDA
+All data sets were cleaned in R using the tidyverse package, while keeping a copy of the raw data set. They were cleaned to ensure variables were consistently represented while also handling invalid and missing values without removing any valid data. All data cleaning and wrangling is reproducible from the raw data sets using the script within the GitHub repository.
+
+[2012 polling data set]{.underline}
+
+The poll_info variable was initially a single string with redundant information including identical election years and candidates across all observations. These were removed and renamed 'state' for meaningfulness.
+
+The Obama and Romney variables indicated no missingness and thus, remained unchanged. Further, all values fell within the valid range of 0 to 100 percent, representing candidate support.
+
+Missing values in the Undecided variable were unchanged as unreported values could neither be perceived to represent 0% undecided participants nor be accurately determined. All non-NA values fell within the valid range of 0 to 100 percent.
+
+Values recorded as "Not included in poll" for the Other variable were changed to NA to ensure that missingness was represented consistently across variables in the data set. All non-NA values fell within the valid range of 0 to 100 percent.
+
+Duplicate poll ID's were also identified with the poll_id column but were further examined before making changes. After investigating, it was noted that the repeated ID's did not correspond to any duplicated observations. Thus, all observations were retained.
+
+Temporal variables start_date and end_date were converted from text to date objects to assist with potential temporal analysis such as examining candidate support over time. Further, it was confirmed that the start_date values was consistently earlier than the end_date values to ensure validity.
+
+A validity check was also conducted on the sample_size variable, examining whether any values were unreasonable in the polling context. The sample_size values less than 1 were observed as invalid as there could not be less than 1 respondent in a poll. These values were recorded as NA rather than removing the observations, in order to retain other valid information.
+
+A close look at the relationship between the partisan_affiliation and partisanship variable explained why many values in partisan_affiliation were recorded as "None".
+
+```{r}
+ggplot(polls_2012_raw, aes(x = partisanship, fill = partisan_affiliation)) +
+  geom_bar() +
+  labs(
+    x = "Partisanship",
+    y = "No. of polls",
+    fill = "Partisan affiliation"
+  ) +
+  theme_classic()
+
+
+```
+
+The investigation indicated that these values were associated to polls that were listed "Nonpartisan" in the partisanship column. Given that nonpartisan polls had no Republican or Democratic affiliation, these values indicate structural missingness rather than incomplete data collection. Therefore, observations were kept and nonpartisan polls were changed from "None" to NA.
+
+Finally, categorical variables "pollster", "sample_subpopulation" and "mode" were examined to check missingness. All variables were understsood to contain no missingness.
+
+The data set was transformed into a long format by reshaping the "Obama", "Romney", "Other", and "Undecided" variables into the columns named "candidate" and "support". Each observation (row) now represents the support for a particular candidate/response within a poll, allowing easier comparisons and visualisations of polling support.
+
+## Exploratory Data Analysis 
 
 The conducted analysis explored how state election results transformed between 2012 and 2016, and further, whether differences in state competitiveness were observed in polling coverage and accuracy. For consistency, election and polling margins were calculated as Democratic - Republican (%). Positive values signify Democratic leaning observations whereas negative values signify Republican advantage.
 
