@@ -172,7 +172,17 @@ Finally, categorical variables "pollster", "sample_subpopulation" and "mode" wer
 
 The data set was transformed into a long format by reshaping the "Obama", "Romney", "Other", and "Undecided" variables into the columns named "candidate" and "support". Each observation (row) now represents the support for a particular candidate/response within a poll, allowing easier comparisons and visualisations of polling support.
 
-## Exploratory Data Analysis 
+[2016 polling data set]{.underline}
+
+The 2016 polling dataset was cleaned using the same methods as the 2012 dataset to ensure consistency comparison across years.
+
+First, the poll_info variable was renamed to state, and all redundant information was removed to leave only state names. Any minor inconsistencies in state name formatting between the two datasets were standardized.
+
+As with the 2012 data, the candidate support variables: Trump, Clinton, Undecided, Other, Johnson, and McMullin, were checked for missing values and validated to ensure percentages fell between to fall between 0 to 100%. The remaining variables (poll_id, start_date, end_date, sample_size, partisan_affiliation, pollster, sample_subpopulation, mode, and Other) were cleaned using the same workflow applied to the 2012 dataset.
+
+Finally, the candidate support columns were reshaped from wide to long format, creating two unified variables: candidate and support. The consistency in structure ensured that the two polling results and election result could be analysed easily.
+
+## Exploratory Data Analysis
 
 The conducted analysis explored how state election results transformed between 2012 and 2016, and further, whether differences in state competitiveness were observed in polling coverage and accuracy. For consistency, election and polling margins were calculated as Democratic - Republican (%). Positive values signify Democratic leaning observations whereas negative values signify Republican advantage.
 
@@ -321,15 +331,5 @@ ggplot(competitive_2016,  aes(x = election_margin, y = poll_margin)) +
 Majority of the 'competitive' states had a mean final week polling margin corresponding to the same side as the actual election results. However, some states had average polling margins contradicting the actual election results (top left quadrant). These particular states had a case where the polling margin indicated a different leading party from the party that eventually won the state. However, the averaging method means that each poll has equal weight and doesn't consider differences in sample size, method of polling, or quality of pollster.
 
 What other data might you collect to augment this dataset? Is it available?
-
-[2016 polling data set]{.underline}
-
-The 2016 polling dataset was cleaned using the same methods as the 2012 dataset to ensure consistency comparison across years.
-
-First, the `poll_info` variable was renamed to `state`, and all redundant information was removed to leave only state names. Any minor inconsistencies in state name formatting between the two datasets were standardized.
-
-As with the 2012 data, the candidate support variables: `Trump`, `Clinton`, `Undecided`, `Other`, `Johnson`, and `McMullin`, were checked for missing values and validated to ensure percentages fell between to fall between 0 to 100%. The remaining variables (`poll_id`, `start_date`, `end_date`, `sample_size`, `partisan_affiliation`, `pollster`, `sample_subpopulation`, `mode`, and `Other`) were cleaned using the same workflow applied to the 2012 dataset.
-
-Finally, the candidate support columns were reshaped from wide to long format, creating two unified variables: `candidate` and `support`. The consistency in structure ensured that the two polling results and election result could be analysed easily.
 
 ## Research Questions
