@@ -71,6 +71,19 @@ polls_2016_tidy <- polls_2016_tidy  %>%
     partisan_affiliation = na_if(partisan_affiliation, "None")
   )
 
+# Investigate pollster variable 
+sum(is.na(polls_2016_tidy$pollster))
+unique(polls_2016_tidy$pollster)
+
+# Investigate sample_subpopulation variable 
+sum(is.na(polls_2016_tidy$sample_subpopulation))
+unique(polls_2016_tidy$sample_subpopulation)
+
+# Investigate mode variable 
+sum(is.na(polls_2016_tidy$mode))
+unique(polls_2016_tidy$mode)
+
+
 # Check missingness in "Other", "Undecided", "Johnson", "McMullin" candidate variables
 sum(is.na(polls_2016_tidy$Undecided))
 sum(is.na(polls_2016_tidy$Johnson))
