@@ -188,17 +188,13 @@ State names were standardised to title case to enable consistency with the two p
 
 The version variable contained dates recorded in two different formats. These were standardised into a single consistent format and converted into a proper date object.
 
-Candidate names were standardised by discarding doubled quotation marks, a formatting artifact introduced by inconsistent escaping in the raw file, which had otherwise caused the same candidate's name to appear inconsistently across different rows.
-
-An examination of the year variable confirmed that all observations followed the expected four-year presidential election cycle, with no missing values identified.
+Candidate names were standardised by discarding doubled quotation marks, a formatting artifact introduced by inconsistent escaping in the raw file, which had otherwise caused the same candidate's name to appear inconsistently across different rows. An examination of the year variable confirmed that all observations followed the expected four-year presidential election cycle, with no missing values identified.
 
 The candidatevotes and totalvotes variables were examined for missingness and negative values. No missing values and no negative values were found in either variable, meaning all vote counts were considered valid.
 
-The state identification variables state_po, state_fips, and state_cen indicated no missingness and thus remained unchanged. Missing state_ic codes were identified to correspond only to 2024 observations for New Hampshire and West Virginia. These values remained represented by `NA`, as the affected states were identifiable through the other state identifier variables.
+The state identification variables state_po, state_fips, and state_cen indicated no missingness and thus remained unchanged. Missing state_ic codes were identified to correspond only to 2024 observations for New Hampshire and West Virginia. These values remained represented by NA, as the affected states were identifiable through the other state identifier variables.
 
-The party_simplified, party_detailed, write_in, and candidate variables were investigated for missingness. Missing values represented by NA were retained to prevent any unsupported information from being introduced into the data set.
-
-Lastly, the cleaned data was examined for any entirely duplicated observations, with none identified.
+The party_simplified, party_detailed, write_in, and candidate variables were investigated for missingness. Missing values represented by NA were retained to prevent any unsupported information from being introduced into the data set. Lastly, the cleaned data was examined for any entirely duplicated observations, with none identified.
 
 ## Exploratory Data Analysis
 
