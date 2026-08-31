@@ -21,8 +21,7 @@ polls_2016_tidy <- polls_2016_tidy %>%
     poll_info = str_remove(
       poll_info,
       " Presidential General Election Trump Vs Clinton"
-    ) 
-  ) %>% 
+    )) %>% 
   # Rename poll_info to state for meaningful variable name 
   rename(state = poll_info)
 
@@ -53,10 +52,12 @@ polls_2016_tidy <- polls_2016_tidy %>%
     start_date = as.Date(start_date), 
     end_date = as.Date(end_date)
   )
+# Check start_date is earlier than end_date for validity 
+sum(polls_2016_tidy$start_date > polls_2016_tidy$end_date, na.rm = TRUE)
 
-# Check if sample size for any observations is less than 1 (invalid values)
+# Check sample_size for any observations less than 1 (invalid values)
 sum(polls_2016_tidy$sample_size < 1, na.rm = TRUE)
-# Negative sample sizes considered invalid, and recorded as missing (NA)
+# Sample sizes below 1 considered invalid, and recorded as missing (NA)
 polls_2016_tidy <- polls_2016_tidy %>%
   mutate(
     sample_size = if_else(sample_size < 1, NA, sample_size)
@@ -69,6 +70,12 @@ polls_2016_tidy <- polls_2016_tidy  %>%
   mutate(
     partisan_affiliation = na_if(partisan_affiliation, "None")
   )
+
+# Check missingness in "Other", "Undecided", "Johnson", "McMullin" candidate variables
+sum(is.na(polls_2016_tidy$Undecided))
+sum(is.na(polls_2016_tidy$Johnson))
+sum(is.na(polls_2016_tidy$McMullin))
+sum(is.na(polls_2016_tidy$Other))
 
 # Convert columns "Trump", "Clinton", "Other", "Undecided"
 # "Johnson", "McMullin" under new candidate column

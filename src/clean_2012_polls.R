@@ -20,9 +20,14 @@ polls_tidy <- polls_tidy %>%
 sum(is.na(polls_tidy$Romney))
 sum(is.na(polls_tidy$Obama))
 
-# Check Obama and Romney values are valid percentages (between 0 and 100)
+# Check Obama and Romney and Undecided values are valid percentages (between 0 and 100)
 sum(polls_tidy$Romney < 0 | polls_tidy$Romney > 100, na.rm = TRUE)
 sum(polls_tidy$Obama < 0 | polls_tidy$Obama > 100, na.rm = TRUE)
+sum(polls_tidy$Undecided < 0 | polls_tidy$Undecided > 100, na.rm = TRUE)
+
+# Check missingness in Undecided variable 
+sum(is.na(polls_tidy$Undecided))
+
 
 # Recode "Not included in poll" to NA for consistent representation of missingness
 # Convert Other values to numeric 
@@ -31,12 +36,14 @@ polls_tidy <- polls_tidy %>%
     Other = na_if(Other, "Not included in poll"),
     Other = as.numeric(Other)
   )
+# Check Other values are valid percentages (between 0 and 100)
+sum(polls_tidy$Other < 0 | polls_tidy$Other > 100, na.rm = TRUE)
+
 
 # Check for duplicated poll ID's 
 sum(duplicated(polls_tidy$poll_id))
-# Check for any completely duplicated observations 
+# Check for any completely duplicated observations
 sum(duplicated(polls_tidy))
-
 
 # Convert start_date and end_date values to Date values 
 polls_tidy <- polls_tidy %>%
@@ -44,6 +51,9 @@ polls_tidy <- polls_tidy %>%
     start_date = as.Date(start_date), 
     end_date = as.Date(end_date)
   )
+# Check start_date is earlier than end_date for validity 
+sum(polls_tidy$start_date > polls_tidy$end_date, na.rm = TRUE)
+
 
 # Check if sample size for any observations is less than 1 (invalid values)
 sum(polls_raw$sample_size < 1, na.rm = TRUE)
