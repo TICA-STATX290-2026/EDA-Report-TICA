@@ -20,7 +20,7 @@ polls_2016 <- read_csv("data/clean/state_polls_2016_clean.csv")
 
 ## Introduction
 
-The state_polls_2012.csv and state_polls_2016.csv data sets are aggregated survey data by HuffPost Pollster, consisting of numerous state-level pre-election polls conducted by many different polling organisations. Each pollster utilised differing methodologies with factors such as interview mode, sample size and population, and field period varying between organisations. Fundamentally, the data sets measure the percentage of respondents who reported support for different presidential candidates, such as Obama/Romney in 2012 and Trump/Clinton in 2016. This data was retrieved from HuffPost Pollster via the pollstR R package on 10 January 2017 as part of the rOpenGov project.
+The 2012 and 2016 polling data sets are aggregated survey data by HuffPost Pollster, consisting of numerous state-level pre-election polls conducted by many different polling organisations. Each pollster utilised differing methodologies with factors such as interview mode, sample size and population, and field period varying between organisations. Fundamentally, the data sets measure the percentage of respondents who reported support for different presidential candidates, such as Obama/Romney in 2012 and Trump/Clinton in 2016. This data was retrieved from HuffPost Pollster via the pollstR R package on 10 January 2017 as part of the rOpenGov project. The polling data sets state_polls_2012.csv and state_polls_2016.csv can be found in the data/raw/ folder within the [GitHub Repository](https://github.com/TICA-STATX290-2026/EDA-Report-TICA)
 
 Below is a detailed explanation of each column.
 
@@ -88,7 +88,7 @@ The number of observed polls are also not uniformly distributed throughout eithe
 
 Some candidates and response categories were also not included in every observation, leading to missing or non-applicable values. All together, such characteristics must be taken into consideration when comparing and interpreting polling results.
 
-The 1976-2024-president.csv data set consists of certified state-level returns for the US presidential elections. The purpose of this data set is to record realised election outcomes and thus, provides a foundation for comparison with polling estimates. It contains data from 1976 to 2024, retrieved from the MIT Election Data and Science Lab via Harvard Dataverse. Each observation records the votes for one candidate in a specific state and year. The data set fundamentally measures candidate vote counts and total number of state votes, along with information identifying the year of election, candidate, state and political party. For this particular analysis, the observations containing year 2012 and 2016 are specifically relevant given the availability of the polling data.
+The 1976-2024-president.csv data set consists of certified state-level returns for the US presidential elections. The purpose of this data set is to record realised election outcomes and thus, provides a foundation for comparison with polling estimates. It contains data from 1976 to 2024, retrieved from the MIT Election Data and Science Lab via Harvard Dataverse. Each observation records the votes for one candidate in a specific state and year. The data set fundamentally measures candidate vote counts and total number of state votes, along with information identifying the year of election, candidate, state and political party. For this particular analysis, the observations containing year 2012 and 2016 are specifically relevant given the availability of the polling data. The election data set 1976-2024-president.csv can be found in the data/raw/ folder within the [GitHub Repository](https://github.com/TICA-STATX290-2026/EDA-Report-TICA)
 
 Below is a detailed explanation of each column.
 
@@ -136,7 +136,7 @@ A notable limitation of the election data set is that results are aggregated and
 
 ## Description of Data Cleaning
 
-All data sets were cleaned in R using the tidyverse package, while keeping a copy of the raw data set. They were cleaned to ensure variables were consistently represented while also handling invalid and missing values without removing any valid data. All data cleaning and wrangling is reproducible from the raw data sets using the script within the GitHub repository (link).
+All data sets were cleaned in R using the tidyverse package, while keeping a copy of the raw data set. They were cleaned to ensure variables were consistently represented while also handling invalid and missing values without removing any valid data. All data cleaning and wrangling is reproducible from the raw data sets using the scripts within the [GitHub Repository](https://github.com/TICA-STATX290-2026/EDA-Report-TICA).
 
 [2012 polling data set]{.underline}
 
@@ -173,19 +173,21 @@ The investigation indicated that these values were associated to polls that were
 
 Finally, categorical variables "pollster", "sample_subpopulation" and "mode" were examined to check missingness. All variables were understsood to contain no missingness.
 
-The data set was transformed into a long format by reshaping the "Obama", "Romney", "Other", and "Undecided" variables into the columns named "candidate" and "support". Each observation (row) now represents the support for a particular candidate/response within a poll, allowing easier comparisons and visualisations of polling support.
+The data set was transformed into a long format by reshaping the "Obama", "Romney", "Other", and "Undecided" variables into the columns named "candidate" and "support". Each observation (row) now represents the support for a particular candidate/response within a poll, allowing easier comparisons and visualisations of polling support. The cleaning script for the data set can be found in src/clean_2012_polls.R, with the cleaned data set, state_polls_2012_clean.csv in data/clean/.
 
 [2016 polling data set]{.underline}
 
-The 2016 polling dataset was cleaned using the same methods as the 2012 dataset to ensure consistency comparison across years.
+The 2016 polling dataset was cleaned using the same methods as the 2012 dataset to ensure consistency comparison across years. The cleaning script for the data set can be found in src/clean_2016_polls.r, with the cleaned data set, state_polls_2016_clean.csv in data/clean/.
 
 First, the "poll_info" variable was renamed to "state", and all redundant information was removed to leave only state names. Any minor inconsistencies in state name formatting between the two datasets were standardized.
 
-As with the 2012 data, the candidate support variables: "Trump", "Clinton", "Undecided", "Other", "Johnson", and "McMullin", were checked for missing values and validated to ensure percentages fell between 0 to 100%. The remaining variables ("poll_id", "start_date", "end_date", "sample_size", "partisan_affiliation", "pollster", "sample_subpopulation", "mode", and "Other") were cleaned using the same workflow applied to the 2012 dataset.
+As with the 2012 data, the candidate support variables: "Trump", "Clinton", "Undecided", "Other", "Johnson", and "McMullin", were checked for missing values and validated to ensure percentages fell between 0 to 100%. The remaining variables ("poll_id", "start_date", "end_date", "sample_size", "partisan_affiliation", "pollster", "sample_subpopulation", "mode", and "Other") were cleaned using the same workflow applied to the 2012 data set.
 
 Finally, the candidate support columns were reshaped from wide to long format, creating two new variables: "candidate" and "support". The consistency in structure ensured that the two polling results and election result could be analysed easily.
 
-[1976--2024 election data set]{.underline}
+[1976-2024 election data set]{.underline}
+
+The cleaning script for this data set can be found in src/clean_1976-2024_elections.R, with the cleaned data set, 1976-2024-president-clean.csv in data/clean/.
 
 State names were standardised to title case to enable consistency with the two polling data sets. The office and notes variables were removed entirely, as office held an identical value for every observation and notes contained no recorded values at all as neither offered any useful variation for further analysis.
 
