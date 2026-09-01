@@ -24,41 +24,41 @@ Below is a detailed explanation of each column.
 
 **Key Variables:**
 
-- poll_info: text identifying the contest e.g. 2016-washington-d-c-president-trump-vs-clinton
+-   poll_info: text identifying the contest e.g. 2016-washington-d-c-president-trump-vs-clinton
 
-- Obama / Romney (2012): Reported support for candidate (%, major-party)
+-   Obama / Romney (2012): Reported support for candidate (%, major-party)
 
-- Trump, Clinton, Johnson, McMullin (2016): Reported support for each candidate (%)
+-   Trump, Clinton, Johnson, McMullin (2016): Reported support for each candidate (%)
 
-- Undecided: Reported undecided voters (%)
+-   Undecided: Reported undecided voters (%)
 
-- Other: Reported support for other candidates (%)
+-   Other: Reported support for other candidates (%)
 
-- poll_id: Poll identifier
+-   poll_id: Poll identifier
 
-- pollster: Polling organisation, sometimes with sponsor/partner appended
+-   pollster: Polling organisation, sometimes with sponsor/partner appended
 
-- start_date, end_date: Field period (YYYY-MM-DD)
+-   start_date, end_date: Field period (YYYY-MM-DD)
 
-- sample_subpopulation: Likely Voters / Registered Voters / Adults
+-   sample_subpopulation: Likely Voters / Registered Voters / Adults
 
-- sample_size: Reported sample size
+-   sample_size: Reported sample size
 
-- mode: Interview mode (Live Phone, Internet, Mixed...)
+-   mode: Interview mode (Live Phone, Internet, Mixed...)
 
-- partisanship: Whether the poll is Nonpartisan, or partisan by Pollster or Sponsor
+-   partisanship: Whether the poll is Nonpartisan, or partisan by Pollster or Sponsor
 
-- partisan_affiliation: Party affiliation where partisan (Dem/Rep/None)
+-   partisan_affiliation: Party affiliation where partisan (Dem/Rep/None)
 
 **Data Types:**
 
-- Numerical: Obama, Romney, Trump, Clinton, Johnson, McMullin, Undecided, Other, sample_size
+-   Numerical: Obama, Romney, Trump, Clinton, Johnson, McMullin, Undecided, Other, sample_size
 
-- Categorical: poll_info, pollster, sample_subpopulation, mode, partisanship, partisan_affiliation
+-   Categorical: poll_info, pollster, sample_subpopulation, mode, partisanship, partisan_affiliation
 
-- Temporal: start_date, end_date
+-   Temporal: start_date, end_date
 
-- ID: poll_id
+-   ID: poll_id
 
 Varying factors such as sample size, sample population, field period, and interview mode means that observations are not based on identical polling methods or populations and thus, may not be directly comparable.
 
@@ -91,41 +91,41 @@ Below is a detailed explanation of each column.
 
 **Key Variables:**
 
-- year: year which election was held
+-   year: year which election was held
 
-- state: name of state
+-   state: name of state
 
-- state_po: postal abbreviation of state
+-   state_po: postal abbreviation of state
 
-- state_fips, state_cen, state_ic: identification codes of state (FIPS code, Census state code, ICPSR state code)
+-   state_fips, state_cen, state_ic: identification codes of state (FIPS code, Census state code, ICPSR state code)
 
-- candidate: name of presidential candidate as it appears in House Clerk report
+-   candidate: name of presidential candidate as it appears in House Clerk report
 
-- party_detailed: detailed political party classification as they appear in House Clerk report
+-   party_detailed: detailed political party classification as they appear in House Clerk report
 
-- party_simplified: simplified political party classification
+-   party_simplified: simplified political party classification
 
-- writein: if candidate was a write-in candidate
+-   writein: if candidate was a write-in candidate
 
-- candidatevotes: number of votes for the candidate for the particular party
+-   candidatevotes: number of votes for the candidate for the particular party
 
-- totalvotes: total votes in the state
+-   totalvotes: total votes in the state
 
-- office: Office contested
+-   office: Office contested
 
-- version: date the data set was last updated (format: yyyymmdd)
+-   version: date the data set was last updated (format: yyyymmdd)
 
-- notes: additional information
+-   notes: additional information
 
 **Data Types:**
 
-- Numerical: candidatevotes, totalvotes, year
+-   Numerical: candidatevotes, totalvotes, year
 
-- Categorical\*: state, state_po, party_detailed, party_simplified, office, candidate, state_fips, state_cen, state_ic
+-   Categorical\*: state, state_po, party_detailed, party_simplified, office, candidate, state_fips, state_cen, state_ic
 
-- Logical: writein
+-   Logical: writein
 
-- Metadata: version, notes
+-   Metadata: version, notes
 
 \*Last 3 variables are stored as numeric codes, however, treated as categorical given they identify states and do not represent quantities.
 
@@ -182,7 +182,7 @@ As with the 2012 data, the candidate support variables: "Trump", "Clinton", "Und
 
 Finally, the candidate support columns were reshaped from wide to long format, creating two new variables: "candidate" and "support". The consistency in structure ensured that the two polling results and election result could be analysed easily.
 
-[1976–2024 election data set]{.underline}
+[1976--2024 election data set]{.underline}
 
 State names were standardised to title case to enable consistency with the two polling data sets. The office and notes variables were removed entirely, as office held an identical value for every observation and notes contained no recorded values at all as neither offered any useful variation for further analysis.
 
