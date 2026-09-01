@@ -354,7 +354,6 @@ Also, data on quality of pollsters and their differing methodologies (e.g. histo
 
 ## Research Questions
 
-<<<<<<< HEAD
 The exploratory data analysis observed that there was more polling coverage among competitive states, and also highlighted a greater variation in polling error in 2016. These findings prompted a deeper investigation into whether polling coverage results in greater accuracy. Previous research suggests that 'pooling polls improves the precision of polling estimates', but also indicates that polling methodologies can introduce biases that cannot be removed 'if the biases work in the same direction' (Sunshine, 2011). This motivates an examination on whether characteristics of polling are related to polling error. Below are two research questions and their potential ethical consequences.
 
 RQ1: Does greater polling coverage enhance state-level polling accuracy, or do competitive states remain challenging to predict regardless of greater polling coverage?
@@ -367,7 +366,6 @@ Ethical consideration: Associations between specific polling factors and errors 
 
 ## **References**
 
-Sunshine, H D 2011, \'The Evolution of Election Polling in the United States\', Public Opinion Quarterly, vol. 75, Oxford Academic, no. 5, pp. 962--981.
-=======
-‌
->>>>>>> fe3c083 (Add section explaining what data could be augmented.)
+Sunshine, H D 2011, 'The Evolution of Election Polling in the United States', Public Opinion Quarterly, vol. 75, Oxford Academic, no. 5, pp. 962--981.
+
+‌(Add section explaining what data could be augmented.)
