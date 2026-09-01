@@ -367,5 +367,3 @@ Ethical consideration: Associations between specific polling factors and errors 
 ## **References**
 
 Sunshine, H D 2011, 'The Evolution of Election Polling in the United States', Public Opinion Quarterly, vol. 75, Oxford Academic, no. 5, pp. 962--981.
-
-‌(Add section explaining what data could be augmented.)
