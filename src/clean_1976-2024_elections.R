@@ -17,7 +17,10 @@ sum(is.na(X1976_2024_president$year))
 X1976_2024_president_clean <- X1976_2024_president %>%
 
   # Standardise state variable to match the polling data sets
-  mutate(state = str_to_title(state)) %>%
+  mutate(
+    state = str_to_title(state),
+    state = if_else(state == "District Of Columbia", "Washington Dc", state)
+    ) %>%
 
   # Drop 'office' (constant value for every observation)
   select(-office) %>%
