@@ -1,45 +1,33 @@
-
-
+library(tidyverse)
+polls_raw <- read.csv("data/raw/state_polls_2012.csv")
+polls_tidy <- polls_raw
 
 # Visualisation of polling activity towards election day
 ggplot(polls_tidy, aes(x = sample_subpopulation, y = Obama - Romney)) +
   geom_boxplot() +
   labs(
-    title = "Polling margins across sampled populations",
+    title = "Polling margins across different sampled populations",
     x = "Sample population",
     y = "Obama - Romney margin"
   ) +
   theme_minimal()
 
-
-# Visualisation of polling activity towards election day
-polls_tidy <- polls_tidy |>
+# Create a variable calculating days until election
+polls_tidy <- polls_tidy %>%
   mutate(
-    weeks_to_election =
-      floor(as.numeric(as.Date("2012-11-06") - end_date) / 7)
+    end_date = as.Date(end_date),
+    days_before_election = as.numeric(as.Date("2012-11-06") - end_date)
   )
-
-polls_tidy |>
-  count(weeks_to_election) |>
-  ggplot(aes(x = weeks_to_election, y = n)) +
-  geom_col() +
-  scale_x_reverse() +
-  labs(
-    title = "Polling activity approaching Election Day",
-    x = "Weeks until Election Day",
-    y = "Number of polls"
-  ) +
-  theme_minimal()
 
 # Visualisation of undecided voters towards election day
 ggplot(polls_tidy,
-       aes(x = days_to_election, y = Undecided)) +
-  geom_point(alpha = 0.4) +
+       aes(x = days_before_election, y = Undecided)) +
+  geom_point() +
   geom_smooth() +
   scale_x_reverse() +
   labs(
     title = "Undecided voters approaching Election Day",
-    x = "Days until Election Day",
+    x = "Days before Election Day",
     y = "Undecided voters (%)"
   ) +
   theme_minimal()
