@@ -218,25 +218,26 @@ The conducted analysis explored how state election results transformed between 2
 #| fig-cap: "State election margins are mostly consistent in both years, but some 
 #| states shifted from Democratic to Republican"
 
-election_margin <- election_results %>%
+election_results_margin <- election_results %>%
   filter(year %in% c(2012, 2016), party_simplified %in% c("DEMOCRAT", "REPUBLICAN")) %>%
   group_by(year, state, party_simplified) %>%
   summarise(votes = sum(candidatevotes), totalvotes = first(totalvotes), .groups = "drop") %>%
   pivot_wider(names_from = party_simplified, values_from = votes) %>%
   mutate(margin = (DEMOCRAT - REPUBLICAN) / totalvotes * 100) %>%
-  select(year, state, margin) %>%
-  pivot_wider(names_from = year, values_from = margin, names_prefix = "margin_")
+  select(state, year, margin) %>%
+  pivot_wider(names_from = year, values_from = margin)
 
-ggplot(election_margin, aes(x = margin_2012, y = margin_2016)) +
+ggplot(election_results_margin, aes(x = `2012`, y = `2016`)) +
   geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed") +
   geom_vline(xintercept = 0, linetype = "dashed") +
-  coord_cartesian(xlim = c(-50, 50), ylim = c(-50, 40)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  coord_cartesian(xlim = c(-50, 45), ylim = c(-50, 30)) +
   labs(
-    title = "State Presidential Election Margins: 2012 vs 2016",
-    x = "2012 Democratic - Republican Margin (percentage points)",
-    y = "2016 Democratic - Republican Margin (percentage points)"
+    title = "State-Level Presidential Election Margins for 2012 and 2016",
+    x = "Democratic - Republican Margin for Election Year 2012 (% points)",
+    y = "Democratic - Republican Margin for Election Year 2016 (% points)"
   )
+
 
 ```
 
@@ -249,35 +250,38 @@ The observation of competitive states led to an analysis on polling and how this
 #| fig-cap: "States with competitive election results appeared to receive greater
 #| polling coverage in week before elections for both 2012 and 2016"
 
-# Count final-week polls for each state
-poll_counts_2012 <- polls_2012 %>%
+# Count number of polls in the week before 2012 elections for each state
+poll_counts_for_2012 <- polls_2012 %>%
   filter(end_date >= as.Date("2012-10-30"), end_date < as.Date("2012-11-06")) %>%
   distinct(state, poll_id) %>%
-  count(state, name = "poll_counts") %>%
+  count(state, name = "num_polls") %>%
   mutate(year = 2012)
 
-poll_counts_2016 <- polls_2016 %>%
+# Count number of polls in the week before 2016 elections for each state
+poll_counts_for_2016 <- polls_2016 %>%
   filter(end_date >= as.Date("2016-11-01"), end_date < as.Date("2016-11-08")) %>%
   distinct(state, poll_id) %>%
-  count(state, name = "poll_counts") %>%
+  count(state, name = "num_polls") %>%
   mutate(year = 2016)
 
-# Combine both years and add election competitiveness
-polling_competitiveness <- bind_rows(poll_counts_2012, poll_counts_2016) %>%
-  left_join(election_margin %>%
-      pivot_longer(cols = c(margin_2012, margin_2016), names_to = "year", values_to = "margin") %>%
-      mutate(year = as.numeric(str_remove(year, "margin_")), competitiveness = abs(margin)) %>%
-      select(state, year, competitiveness),by = c("state", "year"))
+# Combine both years and include state competitiveness
+polling_competitiveness <- bind_rows(poll_counts_for_2012, poll_counts_for_2016) %>%
+  left_join(election_results_margin %>%
+      pivot_longer(cols = c(`2012`, `2016`), names_to = "year", values_to = "margin") %>%
+      mutate(year = as.numeric(year), abs_margin = abs(margin)) %>%
+      select(state, year, abs_margin),by = c("state", "year"))
 
-ggplot(polling_competitiveness, aes(x = competitiveness, y = poll_counts, colour = factor(year))) +
+# Plot graph and include straight line trend for each year 
+ggplot(polling_competitiveness, aes(x = abs_margin, y = num_polls, colour = factor(year))) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   labs(
-    title = "State Competitiveness And Polling In The Week Before Elections",
-    x = "Absolute Election Margin (percentage points)",
-    y = "Number of Final-Week Polls",
+    title = "Polling Coverage and State Competitiveness in Week Prior to Elections",
+    x = "Absolute State Election Margin (% points)",
+    y = "Number of Polls in Week Before Elections",
     colour = "Election Year"
   )
+
 ```
 
 The negative linear relationship indicates that states with smaller election margins had mostly received more polls in the week prior to the elections, and vice versa. This implies that competitive states had more polling coverage rather than an even distribution across the states. It is important to note that the state competitiveness is measured utilising the election results, and thus, this relationship may be an association rather than a cause-and-effect evidence that shows competitiveness resulted in greater polling activity.
@@ -288,44 +292,44 @@ The differences in polling coverage led to an examination of the accuracy of the
 #| label: boxplot-polling-error-2012-and-2016 
 #| fig-cap: "Polling leaning more Republican than actual election in 2012, whereas polling leaning more Democratic than actual election in 2016, with greater variation in 2016"
 
-# Calculate average final-week polling margin for each state in 2012
-poll_margin_2012 <- polls_2012 %>%
-  filter(candidate %in% c("Obama", "Romney"), end_date >= as.Date("2012-10-30"),
-    end_date < as.Date("2012-11-06")) %>%
-  select(poll_id, state, candidate, support) %>%
-  pivot_wider(names_from = candidate, values_from = support) %>%
-  mutate(poll_margin = Obama - Romney) %>%
-  group_by(state) %>%
-  summarise(poll_margin = mean(poll_margin, na.rm = TRUE)) %>%
-  mutate(year = "2012")
-
-# Calculate average final-week polling margin for each state in 2016
+# Calculate mean polling margin for each state in 2016
 poll_margin_2016 <- polls_2016 %>%
-  filter(candidate %in% c("Clinton", "Trump"), end_date >= as.Date("2016-11-01"),
+  filter(candidate %in% c("Trump", "Clinton"), end_date >= as.Date("2016-11-01"),
   end_date < as.Date("2016-11-08")) %>%
-  select(poll_id, state, candidate, support) %>%
+  select(state, candidate, support, poll_id) %>%
   pivot_wider(names_from = candidate, values_from = support) %>%
-  mutate(poll_margin = Clinton - Trump) %>%
+  mutate(average_poll_margin = Clinton - Trump) %>%
   group_by(state) %>%
-  summarise(poll_margin = mean(poll_margin, na.rm = TRUE)) %>%
+  summarise(average_poll_margin = mean(average_poll_margin, na.rm = TRUE)) %>%
   mutate(year = "2016")
 
-# Combine polling margins and calculate polling error
-polling_errors <- bind_rows(poll_margin_2012,poll_margin_2016) %>%
-  left_join(election_margin %>%
-      pivot_longer(cols = c(margin_2012, margin_2016), names_to = "year", values_to = "election_margin") %>%
-      mutate(year = str_remove(year, "margin_")),
-    by = c("state", "year")
-  ) %>%  mutate(polling_error = poll_margin - election_margin)
+# Calculate mean polling margin for each state in 2012
+poll_margin_2012 <- polls_2012 %>%
+  filter(candidate %in% c("Romney", "Obama"), end_date >= as.Date("2012-10-30"),
+    end_date < as.Date("2012-11-06")) %>%
+  select(state, candidate, support, poll_id) %>%
+  pivot_wider(names_from = candidate, values_from = support) %>%
+  mutate(average_poll_margin = Obama - Romney) %>%
+  group_by(state) %>%
+  summarise(average_poll_margin = mean(average_poll_margin, na.rm = TRUE)) %>%
+  mutate(year = "2012")
 
-ggplot(polling_errors,aes(x = year, y = polling_error)) +
+# Combine polling margins for both years and measure polling error
+state_poll_errors <- bind_rows(poll_margin_2012,poll_margin_2016) %>%
+  left_join(election_results_margin %>%
+      pivot_longer(cols = c(`2012`, `2016`), names_to = "year", values_to = "election_results_margin"), by = c("year", "state")) %>%
+  mutate(polling_error = average_poll_margin - election_results_margin)
+
+# Create boxplot, with dashed line representing perfect polling accuracy  
+ggplot(state_poll_errors,aes(x = year, y = polling_error)) +
   geom_boxplot() +
   geom_hline(yintercept = 0, linetype = "dashed") +
   labs(
-    title = "Final-Week State Polling Error: 2012 vs 2016",
+    title = "State-Level Polling Error: 2012 vs 2016",
     x = "Election Year",
     y = "Polling Error (% points)"
   )
+
 ```
 
 While the 2012 polling error appears below zero, the 2016 error appears to be centred above zero and displays a greater spread. This difference corresponds to 2012 polls tending to be slightly more Republican than eventual results, and conversely, more Democratic in the 2016 polls. The greater variation in the 2016 polling error also indicates that polling margins were further from actual results than in comparison to 2012. An important limitation to consider is that the visualisation explores individual polls and with equal weight. This means that states with more polling coverage had greater influence than the states with fewer polls.
@@ -336,21 +340,19 @@ After observing a larger polling error for 2016, a closer examination on competi
 #| label: scatter-competitive-state-polls-in-2016
 #| fig-cap: "Many competitive states had average polling opposing the leading party from actual election votes"
 
-# Select competitive states from 2016
-competitive_2016 <- polling_errors %>%
-  filter(
-    year == "2016",
-    abs(election_margin) <= 10
-  )
+# Select competitive states from 2016 (states with election margins within 10 percentage points of zero)
+competitive_states_2016 <- state_poll_errors %>%
+  filter(abs(election_results_margin) <= 10, year == "2016")
 
-ggplot(competitive_2016,  aes(x = election_margin, y = poll_margin)) +
+ggplot(competitive_states_2016,  aes(x = election_results_margin, y = average_poll_margin)) +
   geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed") +
   geom_vline(xintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  coord_cartesian(xlim = c(-10, 10), ylim = c(-10, 10)) +
   labs(
-    title = "2016 Final-Week Polling in Competitive States",
-    x = "Actual Election Margin (percentage points)",
-    y = "Average Final-Week Polling Margin (percentage points)")
+    title = "2016 Polling in Competitive States",
+    x = "2016 Election Results Margin (% points)",
+    y = "Average Polling Margin (% points)")
 
 ```
 
