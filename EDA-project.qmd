@@ -93,11 +93,11 @@ ggplot(polls_2016, aes(x = end_date)) +
   theme_classic()
 ```
 
-The number of observed polls are also not uniformly distributed throughout either 2012 or 2016 election cycle, with both data sets indicating greater polling activity towards Election Day. This means that respondents' preferences in the later periods of campaigns are more heavily represented. The temporal imbalance poses a limitation and should be considered when analysing summaries across the entire period.
+The number of observed polls are also not uniformly distributed throughout either 2012 or 2016 election cycle, with both data sets indicating greater polling activity towards Election Day. This means that polling observations in the later periods of campaigns are more heavily represented. This uneven temporal distribution should be considered when analysing summaries across the entire period.
 
 Some candidates and response categories were also not included in every observation, leading to missing or non-applicable values. All together, such characteristics must be taken into consideration when comparing and interpreting polling results.
 
-The 1976-2024-president.csv data set consists of certified state-level returns for the US presidential elections. The purpose of this data set is to record realised election outcomes and thus, provides a foundation for comparison with polling estimates. It contains data from 1976 to 2024, retrieved from the MIT Election Data and Science Lab via Harvard Dataverse. Each observation records the votes for one candidate in a specific state and year. The data set fundamentally measures candidate vote counts and total number of state votes, along with information identifying the year of election, candidate, state and political party. For this particular analysis, the observations containing year 2012 and 2016 are specifically relevant given the availability of the polling data. The election data set 1976-2024-president.csv can be found in the data/raw/ folder within the [GitHub Repository](https://github.com/TICA-STATX290-2026/EDA-Report-TICA)
+The 1976-2024 election data set consists of certified state-level returns for the US presidential elections. The purpose of this data set is to record realised election outcomes and thus, provides a foundation for comparison with polling estimates. It contains data from 1976 to 2024, retrieved from the MIT Election Data and Science Lab via Harvard Dataverse. Each observation records the votes for one candidate in a specific state and year. The data set fundamentally measures candidate vote counts and total number of state votes, along with information identifying the year of election, candidate, state and political party. For this particular analysis, the observations containing year 2012 and 2016 are specifically relevant given the availability of the polling data. The election data set 1976-2024-president.csv can be found in the data/raw/ folder within the [GitHub Repository](https://github.com/TICA-STATX290-2026/EDA-Report-TICA)
 
 Below is a detailed explanation of each column.
 
@@ -131,15 +131,17 @@ Below is a detailed explanation of each column.
 
 **Data Types:**
 
--   Numerical: candidatevotes, totalvotes, year
+-   Numerical: candidatevotes, totalvotes
 
 -   Categorical\*: state, state_po, party_detailed, party_simplified, office, candidate, state_fips, state_cen, state_ic
+
+-   Temporal: year
 
 -   Logical: writein
 
 -   Metadata: version, notes
 
-\*Last 3 variables are stored as numeric codes, however, treated as categorical given they identify states and do not represent quantities.
+\*Last 3 variables are stored as numeric codes, however, treated as categorical given they identify states rather than represent quantities.
 
 A notable limitation of the election data set is that results are aggregated and recorded only at the state level. This means that distinctions within a particular state (e.g. voting patterns between counties or urban/rural areas) cannot be investigated. Another key limitation for this analysis is the extent of comparison that can be made. Specifically, the election data set spans 1976 to 2024, while only 2 of these years overlap with the available polling data. This limits the direct comparisons between polling predictions and actual elections results to 2012 and 2016 observations.
 
@@ -217,13 +219,13 @@ The party_simplified, party_detailed, write_in, and candidate variables were inv
 
 ## Exploratory Data Analysis
 
-We began our analysis by looking at national vote shares and state level winning trends from 1976 to 2024 via "src/clean_1976-2024_elections_visualisations.R". The heatmap produced suggested that while some states stay blue (republican) or red (democrats), presidential elections usually come down to shifts in swing states.
+We began our analysis by looking at national vote shares and state level winning trends from 1976 to 2024 via "src/clean_1976-2024_elections_visualisations.R". The heatmap produced suggested that while many states remain consistent in their voting patterns, presidential elections usually come down to shifts in swing states.
 
-Our investigation are on 2012 and 2016 presidential elections, since our polling data only covers these two periods.
+Our investigation focuses on 2012 and 2016 presidential elections, since the polling data only covers these two periods.
 
-Before comparing baseline candidate support against actual election results, we visualised state by state average margins of "Trump - Clinton" and their distributions using "src/clean_2016_polls_visualisations.r". The produced bar chart and box plot suggested significant variance across states, leading us to look into competitive states.
+Before comparing baseline candidate support against actual election results, a visualisation explored state by state average margins and their distributions using "src/clean_2016_polls_visualisations.r". The produced bar chart and box plot suggested significant variance across states, prompting a further investigation into competitive states.
 
-The conducted analysis explored how state election results transformed between 2012 and 2016, and further, whether differences in state competitiveness were observed in polling coverage and accuracy. For consistency, election and polling margins were calculated as Democratic - Republican (%). Positive values signify Democratic leaning observations whereas negative values signify Republican advantage.
+The following analysis explores how state election results transformed between 2012 and 2016, and further, whether differences in state competitiveness were observed in polling coverage and accuracy. For consistency, election and polling margins were calculated as Democratic - Republican (%). Positive values signify Democratic leaning observations whereas negative values signify Republican advantage.
 
 ```{r}
 #| label: scatter-2012-and-2016-election-margins 
@@ -388,6 +390,6 @@ Question 2: To what extent are polling characteristics such as methodology, part
 
 Ethical consideration: Associations between specific polling factors and errors must be communicated cautiously as this could unfairly impact public trust in particular pollsters/methodologies. This is important to consider as an observed association doesn't directly mean that a certain method or pollster causes inaccurate data.
 
-## **References**
+## References
 
 Sunshine, H D 2011, 'The Evolution of Election Polling in the United States', Public Opinion Quarterly, vol. 75, Oxford Academic, no. 5, pp. 962--981.
