@@ -1,5 +1,3 @@
-# EDA-Report-TICA
-TICA Group Assignment (Part 1)
 # **Exploratory Data Analysis — Presidential Polling and Results**
 
 This repository consists of an exploratory data analysis of US presidential polling and election results, primarily examining the 2012 and 2016 elections. The project explores state-level election results and the extent of polling coverage and accuracy. This exploration identified patterns that further motivated potential research questions.
