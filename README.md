@@ -10,7 +10,8 @@ All analysis in the project was completed in R utilising the tidyverse package, 
 EDA-Report-TICA/
 ├── README.md                     <- this file
 ├── EDA-project.qmd               <- EDA and research questions 
-├── EDA-project.html              <- rendered EDA report 
+├── EDA-project.html              <- rendered EDA report
+├── .gitignore                    <- specifies files git untracks
 ├── EDA-Report-TICA.Rproj         
 └── data/
 │   ├── raw/                      <- original data sets 
@@ -23,13 +24,25 @@ EDA-Report-TICA/
 │       ├── state_polls_2016_clean.csv
 │       └── 1976-2024-president-clean.csv
 │
-└── src/                          <- reproducible data cleaning/wrangling scripts  
+└── exploratory visualisations/   <- visualization pictures developed during the data cleaning phase
+│   ├── average margin by state-2016 polls.png
+│   ├── distribution of margins by state-2016 polls.png
+│   ├── Polling margins across sampled populations in 2012.png
+│   ├── Undecided voters reaching election day 2012 polls.png
+│   ├── Vote share by party overtime (1974-2024).png
+│   └── Winning party by state(1974-2024) (2).png
+│
+└── src/                          <- reproducible data cleaning/wrangling scripts
+    ├── .DS_Store
+    ├── clean_2012_polls_visualisations.R
+    ├── clean_2016_polls_visualisations.r
+    ├── clean_1976-2024_elections_visualisations.R
     ├── clean_2012_polls.R
-    ├── clean_2016_polls.R
+    ├── clean_2016_polls.r
     └── clean_1976-2024_elections.R
 ```
 
-## Data 
+## Data
 
 The project explores 3 data sets:
 
@@ -41,16 +54,33 @@ The project explores 3 data sets:
 
 Polling data was retrieved from HuffPost Pollster via the pollstR R package as part of the rOpenGov project. The 1976-2024 election results were retrieved from the MIT Election Data and Science Lab via Harvard Dataverse. For this particular analysis, the 2012 and 2016 election results were utilised in conjunction with the corresponding polling data sets.
 
-## Reproducibility 
+## Prerequisites
 
-The 3 original data sets in data/raw/ are unchanged. The cleaning and wrangling process is implemented via the R scripts that can be found in src/, and generates the corresponding cleaned data sets found in data/clean/.
+Ensure the following tools and software are installed before running the project:
+- R (v4.0.0+)
+- RStudio (v2022.07+)
+
+Run this command in your R console to install the required packages:
+
+`install.packages("tidyverse")`
+
+## Reproducibility 
 
 To reproduce the project, the below steps must be followed in order:
 
-1.  Clone/download repository
-2.  Open the project EDA-Report-TICA.Rproj in RStudio
-3.  Run the 3 scripts located in src/ folder to reproduce 3 corresponding cleaned data sets in data/clean/
-4.  Render EDA-project.qmd to reproduce the EDA report.
+1.  Run these command to clone the repository:
+
+`git clone https://github.com/your-username/EDA-Report-TICA.git`
+
+2. Launch RStudio and open "EDA-Report-TICA.Rproj"
+
+3. Run data cleaning scripts in "src" folder (scripts without "visualisation" as part of their name), to reproduce 3 corresponding cleaned data sets in data/clean/
+
+- In RStudio, open and run each cleaning scripts sequentially in the src/ folder
+
+4. Render the EDA-project.qmd file to generate the updated HTML report:
+
+- In RStudio, open EDA-project.qmd and click the "Render" button
 
 ## Exploratory Data Analysis 
 
