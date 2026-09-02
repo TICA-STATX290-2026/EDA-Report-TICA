@@ -185,6 +185,8 @@ As with the 2012 data, the candidate support variables: "Trump", "Clinton", "Und
 
 Finally, the candidate support columns were reshaped from wide to long format, creating two new variables: "candidate" and "support". The consistency in structure ensured that the two polling results and election result could be analysed easily.
 
+To explore the dataset's structure, we wrote dataset visualization scripts in "src" folder. They analyzed candidate margins across voter subpopulations (Likely vs. Registered Voters), weekly trends leading to Election Day, and state level margin distributions.
+
 [1976-2024 election data set]{.underline}
 
 The cleaning script for this data set can be found in src/clean_1976-2024_elections.R, with the cleaned data set, 1976-2024-president-clean.csv in data/clean/.
