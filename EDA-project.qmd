@@ -67,23 +67,30 @@ Below is a detailed explanation of each column.
 Varying factors such as sample size, sample population, field period, and interview mode means that observations are not based on identical polling methods or populations and thus, may not be directly comparable.
 
 ```{r}
+#| label: histogram-polling-towards-election-day-2012
+#| fig-cap: "Polling coverage increased closer to Election Day in 2012, with more polls conducted in the last weeks of election campaign."
 
 ggplot(polls_2012, aes(x = end_date)) +
   geom_histogram(bins = 25) +
   labs(
-    title = "Increasing Polling Activity Towards 2012 Election",
+    title = "Polling Activity Towards 2012 Election",
     x = "Poll End Date",
     y = "No. of Polls") +
   theme_classic()
+
+```
+
+```{r}
+#| label: histogram-polling-towards-election-day-2016
+#| fig-cap: "Polling coverage increased closer to Election Day in 2016, with more polls conducted in the last weeks of election campaign."
 
 ggplot(polls_2016, aes(x = end_date)) +
   geom_histogram(bins = 25) +
   labs(
-    title = "Increasing Polling Activity Towards 2016 Election",
+    title = "Polling Activity Towards 2016 Election",
     x = "Poll End Date",
     y = "No. of Polls") +
   theme_classic()
-
 ```
 
 The number of observed polls are also not uniformly distributed throughout either 2012 or 2016 election cycle, with both data sets indicating greater polling activity towards Election Day. This means that respondents' preferences in the later periods of campaigns are more heavily represented. The temporal imbalance poses a limitation and should be considered when analysing summaries across the entire period.
@@ -159,6 +166,9 @@ A validity check was also conducted on the sample_size variable, examining wheth
 A close look at the relationship between the partisan_affiliation and partisanship variable explained why many values in partisan_affiliation were recorded as "None".
 
 ```{r}
+#| label: bar-structural-missingness
+#| fig-cap: "Missing partisan affiliation corresponds to non-partisan polls, indicating structural missingness."
+
 ggplot(polls_2012_raw, aes(x = partisanship, fill = partisan_affiliation)) +
   geom_bar() +
   labs(
