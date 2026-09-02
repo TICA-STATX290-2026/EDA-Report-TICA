@@ -1,6 +1,6 @@
 ---
 title: "Exploratory Data Analysis — Presidential Polling and Results"
-author: "Tia Light, Camille Tran, Amey Chande, Xuan Zhu"
+author: "Tia Light, Tue Linh Tran, Amey Chande, Xuan Zhu"
 date: "2026-09-02"
 format: html
 editor: visual
