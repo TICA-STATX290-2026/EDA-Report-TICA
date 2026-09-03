@@ -10,7 +10,7 @@ All analysis in the project was completed in R utilising the tidyverse package, 
 EDA-Report-TICA/
 ├── README.md                     <- this file
 ├── EDA-project.qmd               <- EDA and research questions 
-├── EDA-project.html              <- rendered EDA report
+├── EDA-project.pdf               <- rendered EDA report in pdf format
 ├── .gitignore                    <- specifies files git untracks
 ├── EDA-Report-TICA.Rproj         
 └── data/
@@ -24,7 +24,7 @@ EDA-Report-TICA/
 │       ├── state_polls_2016_clean.csv
 │       └── 1976-2024-president-clean.csv
 │
-└── exploratory visualisations/   <- visualization pictures developed during the data cleaning phase
+└── exploratory visualisations/   <- additional visualisations developed during EDA
 │   ├── average margin by state-2016 polls.png
 │   ├── distribution of margins by state-2016 polls.png
 │   ├── Polling margins across sampled populations in 2012.png
@@ -78,7 +78,7 @@ To reproduce the project, the below steps must be followed in order:
 
 - In RStudio, open and run each cleaning scripts sequentially in the src/ folder
 
-4. Render the EDA-project.qmd file to generate the updated HTML report:
+4. Render the EDA-project.qmd file to generate the updated pdf report:
 
 - In RStudio, open EDA-project.qmd and click the "Render" button
 
