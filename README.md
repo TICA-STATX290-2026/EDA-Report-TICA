@@ -13,7 +13,7 @@ EDA-Report-TICA/
 ├── EDA-project.pdf               <- rendered EDA report in pdf format
 ├── .gitignore                    <- specifies files git untracks
 ├── EDA-Report-TICA.Rproj         
-└── data/
+├── data/
 │   ├── raw/                      <- original data sets 
 │   │   ├── state_polls_2012.csv
 │   │   ├── state_polls_2016.csv
@@ -24,7 +24,7 @@ EDA-Report-TICA/
 │       ├── state_polls_2016_clean.csv
 │       └── 1976-2024-president-clean.csv
 │
-└── exploratory visualisations/   <- additional visualisations developed during EDA
+├── exploratory visualisations/   <- additional visualisations developed during EDA
 │   ├── average margin by state-2016 polls.png
 │   ├── distribution of margins by state-2016 polls.png
 │   ├── Polling margins across sampled populations in 2012.png
@@ -33,7 +33,6 @@ EDA-Report-TICA/
 │   └── Winning party by state(1974-2024) (2).png
 │
 └── src/                          <- reproducible data cleaning/wrangling scripts
-    ├── .DS_Store
     ├── clean_2012_polls_visualisations.R
     ├── clean_2016_polls_visualisations.r
     ├── clean_1976-2024_elections_visualisations.R
@@ -64,13 +63,17 @@ Run this command in your R console to install the required packages:
 
 `install.packages("tidyverse")`
 
+If TinyTeX has not already been installed, do so in the RStudio Terminal: 
+
+`quarto install tinytex`
+
 ## Reproducibility 
 
 To reproduce the project, the below steps must be followed in order:
 
-1.  Run these command to clone the repository:
+1.  Run this command to clone the repository:
 
-`git clone https://github.com/your-username/EDA-Report-TICA.git`
+`git clone https://github.com/TICA-STATX290-2026/EDA-Report-TICA.git`
 
 2. Launch RStudio and open "EDA-Report-TICA.Rproj"
 
@@ -80,7 +83,7 @@ To reproduce the project, the below steps must be followed in order:
 
 4. Render the EDA-project.qmd file to generate the updated pdf report:
 
-- In RStudio, open EDA-project.qmd and click the "Render" button
+- In RStudio, open EDA-project.qmd and click the "Render" button. Note that all visualisations displayed in the EDA report are produced directly within EDA-project.qmd, available via the GitHub repository. 
 
 ## Exploratory Data Analysis 
 
