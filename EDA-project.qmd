@@ -2,7 +2,7 @@
 title: "Exploratory Data Analysis — Presidential Polling and Results"
 author: "Tia Light, Tue Linh Tran, Amey Chande, Xuan Zhu"
 date: "2026-09-02"
-format: html
+format: pdf
 editor: visual
 execute:
  echo: false
@@ -248,8 +248,8 @@ ggplot(election_results_margin, aes(x = `2012`, y = `2016`)) +
   coord_cartesian(xlim = c(-50, 45), ylim = c(-50, 30)) +
   labs(
     title = "State-Level Presidential Election Margins for 2012 and 2016",
-    x = "Democratic - Republican Margin for Election Year 2012 (% points)",
-    y = "Democratic - Republican Margin for Election Year 2016 (% points)"
+    x = "Democratic - Republican Margin 2012 (% points)",
+    y = "Democratic - Republican Margin 2016 (% points)"
   )
 
 
@@ -290,7 +290,7 @@ ggplot(polling_competitiveness, aes(x = abs_margin, y = num_polls, colour = fact
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   labs(
-    title = "Polling Coverage and State Competitiveness in Week Prior to Elections",
+    title = "Polling Coverage and State Competitiveness Prior to Elections",
     x = "Absolute State Election Margin (% points)",
     y = "Number of Polls in Week Before Elections",
     colour = "Election Year"
